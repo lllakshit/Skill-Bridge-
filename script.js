@@ -804,7 +804,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="hero-content">
               <h1>Our Studio</h1>
               <div class="hero-breadcrumb">
-                <a href="#" data-page="home">Home</a> <span>></span> Studio
+               
               </div>
             </div>
           </section>
