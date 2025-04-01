@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Function to animate number counting
   function animateCounter(element) {
-    const target = parseInt(element.getAttribute("data-count"));
+    const target = Number.parseInt(element.getAttribute("data-count"));
     const duration = 2000; // 2 seconds
     const step = (target / duration) * 10; // Update every 10ms
     let current = 0;
@@ -394,7 +394,7 @@ document.addEventListener("DOMContentLoaded", () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const target = entry.target;
-            const count = parseInt(target.getAttribute("data-count"));
+            const count = Number.parseInt(target.getAttribute("data-count"));
             let current = 0;
             const increment = Math.ceil(count / 50);
             const timer = setInterval(() => {
@@ -1306,42 +1306,43 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p>We are here to help and answer any questions you might have.</p>
                 <p>We look forward to hearing from you.</p>
 
-                <form class="contact-form-full">
-                  <div class="form-group">
-                    <label for="fullName">Full Name</label>
-                    <input type="text" id="fullName" placeholder="John Doe" required>
-                  </div>
+               <form class="contact-form-full" id="my-form" action="https://formspree.io/f/mkgjqwbd" method="POST">
+  <div class="form-group">
+    <label for="fullName">Full Name</label>
+    <input type="text" id="fullName" name="fullName" placeholder="John Doe" required>
+  </div>
 
-                  <div class="form-group">
-                    <label for="emailAddress">Email Address</label>
-                    <input type="email" id="emailAddress" placeholder="abc@xyz.com" required>
-                  </div>
+  <div class="form-group">
+    <label for="emailAddress">Email Address</label>
+    <input type="email" id="emailAddress" name="email" placeholder="abc@xyz.com" required>
+  </div>
 
-                  <div class="form-group">
-                    <label for="contactNumber">Contact Number</label>
-                    <input type="tel" id="contactNumber" placeholder="+91 987-654-3210" required>
-                  </div>
+  <div class="form-group">
+    <label for="contactNumber">Contact Number</label>
+    <input type="tel" id="contactNumber" name="contactNumber" placeholder="+91 987-654-3210" required>
+  </div>
 
-                  <div class="form-group">
-                    <label for="service">Service you are interested in</label>
-                    <select id="service" required>
-                      <option value="" disabled selected>Select a service</option>
-                      <option value="web-design">Web Design</option>
-                      <option value="web-development">Web Development</option>
-                      <option value="app-development">App Development</option>
-                      <option value="digital-marketing">Digital Marketing</option>
-                      <option value="seo">SEO</option>
-                      <option value="graphic-design">Graphic Design</option>
-                    </select>
-                  </div>
+  <div class="form-group">
+    <label for="service">Service you are interested in</label>
+    <select id="service" name="service" required>
+      <option value="" disabled selected>Select a service</option>
+      <option value="web-design">Web Design</option>
+      <option value="web-development">Web Development</option>
+      <option value="app-development">App Development</option>
+      <option value="digital-marketing">Digital Marketing</option>
+      <option value="seo">SEO</option>
+      <option value="graphic-design">Graphic Design</option>
+    </select>
+  </div>
 
-                  <div class="form-group">
-                    <label for="message">Your Message</label>
-                    <textarea id="message" placeholder="Write your message..." rows="4" required></textarea>
-                  </div>
+  <div class="form-group">
+    <label for="message">Your Message</label>
+    <textarea id="message" name="message" placeholder="Write your message..." rows="4" required></textarea>
+  </div>
 
-                  <button type="submit" class="send-message-btn" id="send-email-to-user">Send Message →</button>
-                </form>
+  <button type="submit" class="send-message-btn" id="send-email-to-user1">Send Message →</button>
+  <p id="my-form-status"></p>
+</form>
               </div>
             </div>
 
@@ -1396,6 +1397,39 @@ document.addEventListener("DOMContentLoaded", () => {
         </section>
       `,
   };
+  var form = document.getElementById("my-form");
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    var status = document.getElementById("my-form-status");
+    var data = new FormData(form);
+
+    try {
+      let response = await fetch(form.action, {
+        method: form.method,
+        body: data,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (response.ok) {
+        status.innerHTML = "Thanks for your submission!";
+        form.reset();
+      } else {
+        let result = await response.json();
+        if (result.errors && result.errors.length) {
+          status.innerHTML = result.errors
+            .map((error) => error.message)
+            .join(", ");
+        } else {
+          status.innerHTML = "Oops! There was a problem submitting your form.";
+        }
+      }
+    } catch (error) {
+      status.innerHTML = "Oops! There was a problem submitting your form.";
+    }
+  }
 
   // Get page content container
   const pageContent = document.getElementById("page-content");
@@ -1504,7 +1538,7 @@ document.addEventListener("DOMContentLoaded", () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const target = entry.target;
-            const count = parseInt(target.getAttribute("data-count"));
+            const count = Number.parseInt(target.getAttribute("data-count"));
             let current = 0;
             const increment = Math.ceil(count / 50);
             const timer = setInterval(() => {
@@ -1548,80 +1582,154 @@ document.addEventListener("DOMContentLoaded", () => {
       observer.observe(step);
     });
   }
-  const sendEmailButton = document.getElementById("send-email-to-user");
 
-  if (sendEmailButton) {
-    sendEmailButton.addEventListener("click", async (e) => {
-      e.preventDefault();
+  // Add event listener to contact form submit button
+  // document.addEventListener("click", (e) => {
+  //   if (e.target && e.target.id === "send-email-to-user") {
+  //     e.preventDefault();
 
-      // Get form data
-      const fullName = document.getElementById("fullName").value;
-      const emailAddress = document.getElementById("emailAddress").value;
-      const contactNumber = document.getElementById("contactNumber").value;
-      const service = document.getElementById("service").value;
-      const message = document.getElementById("message").value;
+  //     // Get form data
+  //     const fullName = document.getElementById("fullName").value;
+  //     const emailAddress = document.getElementById("emailAddress").value;
+  //     const contactNumber = document.getElementById("contactNumber").value;
+  //     const service = document.getElementById("service").value;
+  //     const message = document.getElementById("message").value;
 
-      // Validate form data
-      if (
-        !fullName ||
-        !emailAddress ||
-        !contactNumber ||
-        !service ||
-        !message
-      ) {
-        alert("Please fill in all required fields");
-        return;
-      }
+  //     // Validate form data
+  //     if (
+  //       !fullName ||
+  //       !emailAddress ||
+  //       !contactNumber ||
+  //       !service ||
+  //       !message
+  //     ) {
+  //       alert("Please fill in all required fields");
+  //       return;
+  //     }
 
-      // Show loading state
-      sendEmailButton.disabled = true;
-      sendEmailButton.textContent = "Sending...";
+  //     // Show loading state
+  //     e.target.disabled = true;
+  //     e.target.textContent = "Sending...";
 
-      try {
-        // Send data to server
-        const response = await fetch("/api/send-email-to-user", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fullName,
-            emailAddress,
-            contactNumber,
-            service,
-            message,
-          }),
-        });
+  //     // Send the email
+  //     fetch("/api/send-email-to-user", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         fullName,
+  //         emailAddress,
+  //         contactNumber,
+  //         service,
+  //         message,
+  //       }),
+  //     })
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         if (data.success) {
+  //           alert("Your message has been sent successfully!");
+  //           // Reset form
+  //           document.querySelector(".contact-form-full").reset();
+  //         } else {
+  //           alert(
+  //             "Failed to send message: " +
+  //               (data.message || "Please try again later.")
+  //           );
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error sending email:", error);
+  //         alert("An error occurred. Please try again later." + error);
+  //       })
+  //       .finally(() => {
+  //         // Reset button state
+  //         e.target.disabled = false;
+  //         e.target.textContent = "Send Message →";
+  //       });
+  //   }
+  // });
 
-        const data = await response.json();
+  // // Remove or comment out the old sendEmailButton code if it exists elsewhere
 
-        if (data.success) {
-          alert("Your message has been sent successfully!");
-          // Reset form
-          document.querySelector(".contact-form-full").reset();
-        } else {
-          alert("Failed to send message. Please try again later.");
-        }
-      } catch (error) {
-        console.error("Error sending email:", error);
-        alert("An error occurred. Please try again later.");
-      } finally {
-        // Reset button state
-        sendEmailButton.disabled = false;
-        sendEmailButton.textContent = "Send Message →";
-      }
-    });
-  }
+  // // Email validation function
+  // function validateEmail(email) {
+  //   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   return re.test(String(email).toLowerCase());
+  // }
+  // document.addEventListener("click", (e) => {
+  //   if (e.target && e.target.id === "send-email-to-user") {
+  //     e.preventDefault();
 
-  // Email validation function
-  function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
-  }
+  //     // Get form data
+  //     const fullName = document.getElementById("fullName").value;
+  //     const emailAddress = document.getElementById("emailAddress").value;
+  //     const contactNumber = document.getElementById("contactNumber").value;
+  //     const service = document.getElementById("service").value;
+  //     const message = document.getElementById("message").value;
+
+  //     // Validate form data
+  //     if (
+  //       !fullName ||
+  //       !emailAddress ||
+  //       !contactNumber ||
+  //       !service ||
+  //       !message
+  //     ) {
+  //       alert("Please fill in all required fields");
+  //       return;
+  //     }
+
+  //     // Show loading state
+  //     e.target.disabled = true;
+  //     e.target.textContent = "Sending...";
+
+  //     // Send the email
+  //     fetch("/api/send-email-to-user", {
+  //       // Ensure this matches your server endpoint
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         fullName,
+  //         emailAddress,
+  //         contactNumber,
+  //         service,
+  //         message,
+  //       }),
+  //     })
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         if (data.success) {
+  //           alert("Your message has been sent successfully!");
+  //           // Reset form
+  //           document.querySelector(".contact-form-full").reset();
+  //         } else {
+  //           alert(
+  //             "Failed to send message: " +
+  //               (data.message || "Please try again later.")
+  //           );
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error sending email:", error);
+  //         alert("An error occurred. Please try again later.");
+  //       })
+  //       .finally(() => {
+  //         // Reset button state
+  //         e.target.disabled = false;
+  //         e.target.textContent = "Send Message →";
+  //       });
+  //   }
+  // });
 
   // Load the default page (home) on initial load
   loadPage("home");
 
   // Add event listeners to initial content
   addEventListeners();
+  form.addEventListener("submit", handleSubmit);
 });
+
+// Add this code at the end of your document ready function or in a separate script tag
