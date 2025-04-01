@@ -466,14 +466,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Contact form submission
-  const contactForm = document.querySelector(".contact-form-full");
-  if (contactForm) {
-    contactForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      alert("Thank you for your message! We will get back to you soon.");
-      contactForm.reset();
-    });
-  }
+
   // Page content templates
   const pageContents = {
     home: `
@@ -804,7 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="hero-content">
               <h1>Our Studio</h1>
               <div class="hero-breadcrumb">
-               
+                <a href="#" data-page="home">Home</a> <span>></span> Studio
               </div>
             </div>
           </section>
@@ -1347,7 +1340,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <textarea id="message" placeholder="Write your message..." rows="4" required></textarea>
                   </div>
 
-                  <button type="submit" class="send-message-btn">Send Message →</button>
+                  <button type="submit" class="send-message-btn" id="send-email-to-user">Send Message →</button>
                 </form>
               </div>
             </div>
@@ -1553,6 +1546,70 @@ document.addEventListener("DOMContentLoaded", () => {
 
     processSteps.forEach((step) => {
       observer.observe(step);
+    });
+  }
+  const sendEmailButton = document.getElementById("send-email-to-user");
+
+  if (sendEmailButton) {
+    sendEmailButton.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      // Get form data
+      const fullName = document.getElementById("fullName").value;
+      const emailAddress = document.getElementById("emailAddress").value;
+      const contactNumber = document.getElementById("contactNumber").value;
+      const service = document.getElementById("service").value;
+      const message = document.getElementById("message").value;
+
+      // Validate form data
+      if (
+        !fullName ||
+        !emailAddress ||
+        !contactNumber ||
+        !service ||
+        !message
+      ) {
+        alert("Please fill in all required fields");
+        return;
+      }
+
+      // Show loading state
+      sendEmailButton.disabled = true;
+      sendEmailButton.textContent = "Sending...";
+
+      try {
+        // Send data to server
+        const response = await fetch("/api/send-email-to-user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fullName,
+            emailAddress,
+            contactNumber,
+            service,
+            message,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert("Your message has been sent successfully!");
+          // Reset form
+          document.querySelector(".contact-form-full").reset();
+        } else {
+          alert("Failed to send message. Please try again later.");
+        }
+      } catch (error) {
+        console.error("Error sending email:", error);
+        alert("An error occurred. Please try again later.");
+      } finally {
+        // Reset button state
+        sendEmailButton.disabled = false;
+        sendEmailButton.textContent = "Send Message →";
+      }
     });
   }
 
