@@ -140,14 +140,14 @@ app.post("/api/send-email-to-user", async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "llakshitmathurr239@gmail.com", // Your Gmail address
-        pass: "Rajnisha2003#", // Gmail app password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
     // Prepare email to send to the user
     const mailOptions = {
-      from: "llakshitmathurr239@gmail.com",
+      from: "your-email@gmail.com",
       to: "llakshitmathur239@gmail.com", // Send to the specified email
       subject: `New Contact Form Submission: ${service}`,
       text: `
