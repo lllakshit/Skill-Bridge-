@@ -148,7 +148,7 @@ app.post("/api/send-email-to-user", async (req, res) => {
 
     // Prepare email to send to the user
     const mailOptions = {
-      from: "your-email@gmail.com",
+      from: process.env.EMAIL_USER,
       to: "llakshitmathur239@gmail.com", // Send to the specified email
       subject: `New Contact Form Submission: ${service}`,
       text: `
