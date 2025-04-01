@@ -5,6 +5,7 @@ const multer = require("multer");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -71,14 +72,14 @@ app.post("/api/send-email", upload.single("attachment"), async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "your-email@gmail.com", // Your Gmail address
-        pass: "your-app-password", // Gmail app password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS, // Gmail app password
       },
     });
 
     // Prepare email
     const mailOptions = {
-      from: "your-email@gmail.com",
+      from: process.env.EMAIL_USER,
       to: "llakshitmathur239@gmail.com",
       subject: `New Contact Form Submission: ${service}`,
       text: `
